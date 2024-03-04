@@ -1,0 +1,19 @@
+backout_plan: |
+  
+   *backout steps
+
+description: |-
+  Detailed description of CR
+impact: ""
+outage_duration: 0
+planned_start: ""
+planned_end: ""
+priority: ""
+purpose: ""
+type: ""
+assigned_to: ""
+customer_impact: ""
+pipeline_name: ""
+validation_record: ""
+crn_mask: ""
+deployment_ready: ""

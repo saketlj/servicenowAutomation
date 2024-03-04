@@ -1,0 +1,5 @@
+2023-04-20 22:28:38,810 - INFO - User entered forwarder IP address: 
+2023-04-20 22:28:38,810 - INFO - User entered forwarder IP address: 
+2023-04-20 22:28:38,822 - DEBUG - Starting new HTTPS connection (1): sample-url:443
+2023-04-20 22:28:44,010 - DEBUG - sample-url "POST /changemgmt/api/v3/change_requests HTTP/1.1" 201 None
+2023-04-20 22:28:44,020 - INFO - CR CHG3574635 is created successfully

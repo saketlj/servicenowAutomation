@@ -1,0 +1,17 @@
+crn:
+  version: "v1"
+  service_name: "$SERVICE_NAME"
+  cname: ""
+  ctype: ""
+  location: "us-"
+disable_pager: ""
+severity: 4
+customer_impacting: "flse"
+short_description: ""
+long_description: |
+   1. Test Steps
+   2. Execute
+   3. Finish
+source: "chatops"
+version: "1.0"
+tip_msg_type: "create.request"

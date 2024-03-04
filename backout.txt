@@ -1,0 +1,33 @@
+
+   * This section cover recovery step if create, configure hipersocket adpaters and NIC's fails.
+
+   * You need to perform cleanup of hipersocket adpaters and NIC's.
+     
+     ```
+     # sudo ./hs-pre-alloc-linux-s390x delete -c resources.yaml
+     ```
+
+   * Run `lszdev` and validate NIC's are deleted.
+
+     for e.g. In this case `s25_hs_0` and `s25_hs_1` should be deleted.
+
+     ```        
+     root@dal1-qz2-sr3-rk196-s15:/home/sysop/ha_images# sudo lszdev 
+     TYPE       ID                                              ON   PERS  NAMES
+     zfcp-host  0.0.0013                                        no   no    
+     zfcp-host  0.0.0014                                        yes  no    
+     zfcp-host  0.0.0015                                        no   no    
+     zfcp-host  0.0.0016                                        no   no    
+     zfcp-host  0.0.0017                                        no   no    
+     zfcp-host  0.0.0018                                        no   no    
+     zfcp-lun   0.0.0014:0x500507681016388c:0x0000000000000000  yes  no    sdc sg2
+     zfcp-lun   0.0.0014:0x500507681016388c:0x0001000000000000  yes  no    sdd sg3
+     zfcp-lun   0.0.0014:0x500507681026387a:0x0000000000000000  yes  no    sda sg0
+     zfcp-lun   0.0.0014:0x500507681026387a:0x0001000000000000  yes  no    sdb sg1
+     qeth       0.0.0001:0.0.0002:0.0.0003                      yes  no    enc1 
+     qeth       0.0.0004:0.0.0005:0.0.0006                      yes  no    enc4
+     qeth       0.0.0007:0.0.0008:0.0.0009                      yes  no    enc7
+     qeth       0.0.000a:0.0.000b:0.0.000c                      yes  no    enca
+     qeth       0.0.000d:0.0.000e:0.0.000f                      yes  yes   s25_hs_0  -> deleted
+     qeth       0.0.0010:0.0.0011:0.0.0012                      yes  yes   s25_hs_1  -> deleted
+     ```

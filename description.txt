@@ -1,0 +1,115 @@
+####### Template for Hyper Protect Services change readiness #######
+#
+# Basic Questions:
+#   Is this change for Colo or VPC? VPC
+#   Is this a staging or production change? Staging
+#   [Y/N/NA] Has there been a SPbD approval for this (if applicable)? N/A
+#   [Y/N/NA] Is a Nessus scan on Staging completed (if applicable)? N/A
+#   [Y/N/NA] Has all source code been Peer Reviewed (if applicable)? Y
+#   [Y/N/NA] Has a COO completed (if applicable)?
+#   [Y/N/NA] Has SVT successfully completed (if applicable)? N/A
+#   [Y/N/NA] Do you have a post-deployment verification plan? y
+#   [Y/N/NA] Are the operational guides and runbooks to execute this change up to date? y
+#
+# Staging Change Question:
+#   Does a ticket exists where this change has been tested in development or integration? (Provide links to tickets)https://watson.service-now.com/nav_to.do?uri=change_request.do?sys_id=655b6af847bca910c289a709536d4384%26sysparm_view=default
+#   If a change has not been previously tested in development, provide justification on why this change should be approved for staging:
+#
+####################################################################
+Jira Issues: ISRE-9401
+https://jsw.ibm.com/browse/ISRE-9401
+
+Escalation Path: zLinuxOneBareMetal.  This is the PD service for L1BM
+-----------
+
+ESTIMATED EXECUTION TIME
+Hours: 1 hour
+Minutes: 
+
+-----------
+Please place an X inside one of the Yes, No, or NA boxes for each question. Your answers will be used to address change auditing, reporting, and stability  improvements.
+[X] Yes | [] No | [] NA    Are test results available? If not please explain why?
+https://jsw.ibm.com/browse/ZLPARAAS-669
+https://watson.service-now.com/nav_to.do?uri=change_request.do?sys_id=89fea063478719d038e0861f536d4382%26sysparm_view=default
+[X] Yes | [] No | [] NA    Are there any open critical defects related to this CR request?
+[X] Yes | [] No | [] NA    Has someone Peer Reviewed all source code/change implementation steps?
+[] Yes | [X] No | [] NA    Are Current Operational Guides, Knowledge Articles, Tools, Customer-facing workflows, and Run-books created/updated?
+[] Yes | [] No | [X] NA    Is Application Monitoring working in the regions CR is being executed in? 
+[] Yes | [] No | [X] NA    Have you added proof of Resilience/Destructive Testing?  
+[] Yes | [] No | [X] NA    Have you verified if certificates or passwords needed for this change are functioning?
+[] Yes | [] No | [X] NA    Does this change require we disable smoke and/or monitoring?
+[] Yes | [] No | [X] NA    Does this change require a razee lock?
+[] Yes | [] No | [X] NA    Does this change require we disable ingress?
+[] Yes | [] No | [X] NA    Will this change impact internal customers?  If so what is the impact?
+[] Yes | [X] No | [] NA    Does this change require a system restart to take effect?
+[] Yes | [] No | [X] NA   Is there post-implementation monitoring in place for this change?
+
+-----------
+Security Impact Information (Please check Appropriate Option)
+[ ] feature change - [if SRB review is done]
+[ ] code change - [PR review done, weekly code scan]
+[X] configuration change - [Review by ICAB+ required]
+[ ] neteng change - [Review by ICAB+ required]
+[ ] system management change - [dc expansion, add/remove/restart nodes]
+[ ] Vuln patch change - [Provide Specific VULN Ticket/s]
+[ ] SecOps issues - [Review by ICAB+ required]
+[ ] SRE incidents - [Review by ICAB+ required]
+[ ] Maintenance Change - [point to runbook if possible]
+[ ] Train Review - [report train number]
+[ ] No Security Impact Review Needed - [why]
+
+## Steps
+**
+1.Get the `prealloc.yml.zip` file from CR.
+    * Unzip prealloc.yml.zip
+
+2.Get the `hmc_enc.yml.zip` file from CR.
+    * Unzip hmc_enc.yml.zip
+
+3. a) Login to the VPC deployment server and clone hs-pre-alloc repo(see Howhttps://github.ibm.com/ZaaS/iaas-docs/blob/5ab0f94693ac40a1d11fff1a6538cfc804760513/gen_vpc/runbooks/deployer-howto.md)
+    b) Create subdirectory 'ha_images' in the home directory of the user's deployer (e.g :- /home/gakumar/ha_images)
+    c) clone the hs-pre-alloc repo in the same. use :- git clone git@github.ibm.com:ZaaS/hs-pre-alloc.git
+NOTE****  
+ (Please do ssh set up to perform git clone in the local deployer)
+     e.g :- gakumar@dal2-qz2-sr2-rk219-s04:~/ha_images$ git clone git@github.ibm.com:ZaaS/hs-pre-alloc.git
+
+ The exe's can be found in bin directory.
+
+ gakumar@dal2-qz2-sr2-rk219-s04:~/ha_images/hs-pre-alloc/bin$ ls -l
+ total 20348
+ -rwxr-x--- 1 gakumar uaemployees 10295818 Dec 14 09:02 hs-pre-alloc-linux-amd64
+ -rwxr-x--- 1 gakumar uaemployees 10601329 Dec 14 09:02 hs-pre-alloc-linux-s390x
+NOTE***
+
+
+4. Copy files to fowarder node
+  >fn=wdc3-qz1-sr2-rk086-s01
+  >gt -Z mzone777 -U sysop
+  >gt $fn --put prealloc.yml /home/sysop
+  >gt $fn --put hmc_enc.yml /home/sysop
+  >gt $fn --put hs-pre-alloc-linux-s390x /home/sysop
+
+5. Login to forwarder and change to root
+  >gt $fn
+  >sudo bash
+
+6. Create `~/ha_images/` directory on forwarder node in /home/sysop directory and Copy the downloaded `hs-pre-alloc-linux-s390x` executable to `~/ha_images/` directory
+
+7. Copy the downloaded ` prealloc.yml.` executable to `~/ha_images/` directory
+
+8 Copy the downloaded ` hmc_enc.yml.` executable to `~/ha_images/` directory
+
+This step creates hipersocket adapters on the HMC and pre-allocates them for use by baremetal partitions
+
+9.  cd ha_images
+10.  # ./hs-pre-alloc-linux-s390x create --hmc hmc_enc.yml -c prealloc.yml
+11. If previous step fails HPS IaaS will do a manual cleanup and then ask IPOPs to re-run that step. 
+
+##Manual Clean-up ran by HPS IaaS
+1. Log into Remote desktop for wdc
+2. Log in HMC for 
+3.Go to Partitions Details for  wdc3-qz1-sr2-rk086-s01
+4. Select Network, Select appropriate NIC (e.g. s26_hs_0)
+5.Select Actions; Select delete
+6 Click Apply; Click ok
+7. Re-run step 8 of above Steps

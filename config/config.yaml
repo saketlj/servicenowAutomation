@@ -1,0 +1,3 @@
+authorization_token: $TOKEN_VALUE
+api_url: $URL
+json_data_file: sample-file.yaml
